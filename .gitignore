@@ -9,3 +9,7 @@ migrations/
 
 # C extensions
 *.so
+
+*.db
+*.sqlite
+*.sqlite3
