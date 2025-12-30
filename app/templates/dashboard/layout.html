@@ -1,0 +1,55 @@
+<!--
+
+<div class="flex min-h-screen">
+  
+  <aside class="w-64 bg-gray-900 text-white">
+    <ul class="p-4 space-y-2">
+      {% if current_user.role == "client" %}
+        <li><a href="/purchases">Mis compras</a></li>
+      {% endif %}
+
+      {% if current_user.role == "seller" %}
+        <li><a href="/raffles/my">Mis rifas</a></li>
+        <li><a href="/payments/pending">Pagos</a></li>
+      {% endif %}
+
+      {% if current_user.role == "admin" %}
+        <li><a href="/admin/raffles">Todas las rifas</a></li>
+        <li><a href="/admin/logs">Auditoría</a></li>
+      {% endif %}
+    </ul>
+  </aside>
+
+  <main class="flex-1 p-6">
+  </main>
+
+</div>
+-->
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{% block title %}RIFAS APP{% endblock %}</title>
+    <!-- Tailwind CSS -->
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+
+</head>
+
+<body class="bg-gray-100 min-h-screen">
+  <div class="flex">
+    {% include 'dashboard/partials/sidebar.html' %}
+
+    <div class="flex-1">
+      {% include 'dashboard/partials/navbar.html' %}
+
+      <main class="p-6">
+        {% block dashboard_content %}{% endblock %}
+      </main>
+    </div>
+  </div>
+</body>
+</html>
+

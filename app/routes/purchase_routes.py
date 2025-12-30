@@ -1,7 +1,8 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, render_template
 from app.services.purchase_service import (
     reserve_numbers,
-    confirm_payment
+    confirm_payment,
+    get_my_purchases
 )
 from app.decorators import role_required
 from flask_login import login_required
@@ -13,7 +14,10 @@ purchase_bp = Blueprint("purchase", __name__, url_prefix="/purchases")
 @login_required
 @role_required("client", "admin")
 def my_purchases():
-    return "Mis compras"
+    return render_template(
+        "client/my_purchases.html",
+        purchases=get_my_purchases()
+    )
 
 
 @purchase_bp.route("/reserve", methods=["POST"])

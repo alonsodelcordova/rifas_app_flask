@@ -29,14 +29,7 @@ def login():
             if not  is_login:
                 flash('Invalid username or password')
                 return redirect(url_for('auth.index'))
-            
-            if user.role == RolUsuario.client:
-                return redirect(url_for('client.inicio'))
-            elif user.role == RolUsuario.seller:
-                return redirect(url_for('seller.dashboard'))
-            else:
-                return redirect(url_for('admin.dashboard'))
-
+    
             return redirect(url_for('admin.dashboard'))
         else:
             return render_template('auth/login.html', error='Invalid username or password')

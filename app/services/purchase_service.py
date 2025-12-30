@@ -134,3 +134,6 @@ def buy_numbers(raffle_id, numbers):
             db.session.add(item)
 
     return purchase
+
+def get_my_purchases():
+    return Purchase.query.filter_by(user_id=current_user.id).all()

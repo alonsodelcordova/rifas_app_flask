@@ -1,7 +1,18 @@
 import random
 from datetime import datetime
 from app.extensions import db
-from app.models import Raffle, RaffleNumber, Winner
+from app.models import Raffle, RaffleNumber, Winner, Purchase, EstadoRaffle
+from flask_login import current_user
+
+def get_active_raffles():
+    return Raffle.query.filter_by(status=EstadoRaffle.active).all()
+
+def get_raffle_detail(raffle_id):
+    return Raffle.query.get_or_404(raffle_id)
+
+def get_my_purchases():
+    return Purchase.query.filter_by(user_id=current_user.id).all()
+
 
 def draw_raffle(raffle_id):
     raffle = Raffle.query.get_or_404(raffle_id)
@@ -36,3 +47,19 @@ def draw_raffle(raffle_id):
         db.session.add(winner)
 
     return winner
+
+
+def create_raffle(data):
+    raffle = Raffle(
+        title=data["title"],
+        price=data["price"],
+        total_numbers=data["total_numbers"],
+        seller_id=current_user.id,
+        status=EstadoRaffle.draft
+    )
+    db.session.add(raffle)
+    db.session.commit()
+    return raffle
+
+def get_my_raffles():
+    return Raffle.query.filter_by(created_by=current_user.id).all()

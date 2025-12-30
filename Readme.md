@@ -25,11 +25,13 @@ flask run: Inicia el servidor.
 flask shell: Inicia un intérprete interactivo.
 
 ## Comandos Flask-Migrate
-> flask db init: Inicializa un repositorio de migraciones en tu proyecto.
-> flask db migrate -m "show": Detecta cambios en los modelos y crea un nuevo script de migración.
-> flask db upgrade: Aplica la migración más reciente a la base de datos.
-> flask db downgrade: Revierte la última migración aplicada.
-> flask db show [ID]: Muestra detalles de una migración específica.
+```bash
+- flask db init: Inicializa un repositorio de migraciones en tu proyecto.
+- flask db migrate -m "show": Detecta cambios en los modelos y crea un nuevo script de migración.
+- flask db upgrade: Aplica la migración más reciente a la base de datos.
+- flask db downgrade: Revierte la última migración aplicada.
+- flask db show [ID]: Muestra detalles de una migración específica.
+```
 
 
 ## Roles
@@ -48,3 +50,21 @@ flask shell: Inicia un intérprete interactivo.
 - Confirmar pagos (si aplica)
 - Ver ganador
 - Descargar acta
+
+
+## rutas
+| Función            | Client | Seller | Admin |
+| ------------------ | :----: | :----: | :---: |
+| Ver rifas          |    ✅   |    ✅   |   ✅   |
+| Comprar números    |    ✅   |    ❌   |   ❌   |
+| Ver mis compras    |    ✅   |    ❌   |   ❌   |
+| Subir comprobante  |    ✅   |    ❌   |   ❌   |
+| Crear rifa         |    ❌   |    ✅   |   ❌   |
+| Publicar rifa      |    ❌   |    ✅   |   ❌   |
+| Ver ventas         |    ❌   |    ✅   |   ✅   |
+| Confirmar pagos    |    ❌   |    ✅   |   ✅   |
+| Ejecutar sorteo    |    ❌   |    ❌   |   ✅   |
+| Ver ganador        |    ✅   |    ✅   |   ✅   |
+| Descargar acta     |    ❌   |    ✅   |   ✅   |
+| Gestionar usuarios |    ❌   |    ❌   |   ✅   |
+

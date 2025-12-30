@@ -2,6 +2,8 @@ from flask_login import current_user
 from flask import abort
 from functools import wraps
 
+ALLOWED_EXTENSIONS = {'pdf'}
+
 def role_required(*roles):
     def wrapper(fn):
         @wraps(fn)
@@ -13,3 +15,7 @@ def role_required(*roles):
             return fn(*args, **kwargs)
         return decorated_view
     return wrapper
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS 
