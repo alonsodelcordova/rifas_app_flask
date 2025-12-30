@@ -2,8 +2,7 @@ from flask import Blueprint, render_template, redirect, url_for, flash, request
 from app.models import Payment
 from flask_login import login_required  
 from app.decorators import role_required
-from app.services.purchase_service import Purchase
-from app.models import RaffleNumber
+from app.models import RaffleNumber, Purchase, MetodoPayment
 from datetime import datetime
 from app.extensions import db
 
@@ -15,7 +14,45 @@ payment_bp = Blueprint("payments", __name__)
 @role_required("admin")
 def payments():
     payments = Payment.query.filter_by(status="pending").all()
-    return render_template("admin/payments.html", payments=payments)
+    return render_template("payments/payments.html", payments=payments)
+
+
+
+@payment_bp.route("/payments/new", methods=["GET", "POST"])
+@login_required
+@role_required("admin")
+def new_payment():
+    if request.method == "POST":
+        method = request.form["method"]
+        amount = request.form["amount"]
+        reference_code = request.form["reference_code"]
+
+        if not method or not amount or not reference_code:
+            flash("Datos incompletos")
+            return redirect(url_for("payments.payments"))
+        try:
+            amount = float(amount)
+        except ValueError:
+            flash("Monto no válido")
+            return redirect(url_for("payments.payments"))
+
+        with db.session.begin():
+            payment = Payment(
+                purchase_id=None,
+                method=method,
+                amount=amount,
+                reference_code=reference_code,
+                status="pending"
+            )
+            db.session.add(payment)
+            db.session.commit()
+
+            flash("Pago creado correctamente")
+            return redirect(url_for("payments.payments"))
+    else:
+        metodos_pagos = MetodoPayment.values()
+        return render_template("payments/new_payment.html", metodos_pagos=metodos_pagos)
+
 
 
 
@@ -24,7 +61,7 @@ def payments():
 def payment_detail(id):
     payment = Payment.query.get_or_404(id)
     return render_template(
-        "client/payment_detail.html",
+        "payments/payment_detail.html",
         payment=payment
     )
 
@@ -76,39 +113,3 @@ def reject_payment_admin(payment_id):
 
     flash("Pago rechazado y números liberados")
     return redirect(url_for("payments.payments"))
-
-@payment_bp.route("/payments/new", methods=["GET", "POST"])
-@login_required
-@role_required("admin")
-def new_payment():
-    if request.method == "POST":
-        method = request.form["method"]
-        amount = request.form["amount"]
-        reference_code = request.form["reference_code"]
-
-        if not method or not amount or not reference_code:
-            flash("Datos incompletos")
-            return redirect(url_for("payments.payments"))
-        try:
-            amount = float(amount)
-        except ValueError:
-            flash("Monto no válido")
-            return redirect(url_for("payments.payments"))
-
-        with db.session.begin():
-            payment = Payment(
-                purchase_id=None,
-                method=method,
-                amount=amount,
-                reference_code=reference_code,
-                status="pending"
-            )
-            db.session.add(payment)
-            db.session.commit()
-
-            flash("Pago creado correctamente")
-            return redirect(url_for("payments.payments"))
-    else:
-        return render_template("admin/new_payment.html")
-
-

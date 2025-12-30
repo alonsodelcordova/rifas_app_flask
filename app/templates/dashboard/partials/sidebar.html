@@ -4,28 +4,39 @@
     <span class="ml-2 hidden md:inline">Rifas Admin</span>
   </div>
 
-  <nav class="mt-6">
+  <hr class="my-2">
+  <div class="p-4 flex items-center flex-col">
+      <i class="fas fa-user-circle text-5xl"></i>
+      <span class="text-xl font-bold hidden md:block ">
+        {{ current_user.username.upper() }}
+      </span>
+      <span class="text-gray-500">
+        {{ current_user.role.upper() }}
+      </span>
+  </div>
+  <hr class="my-2">
+  <nav class="mt-2">
     <a href="{{ url_for('admin.dashboard') }}"
-       class="block px-4 py-2 hover:bg-gray-700" title="Dashboard">
+       class="block px-4 py-2 hover:bg-gray-700 text-center md:text-left" title="Dashboard">
       <i class="fas fa-tachometer-alt"></i>
        <span class="ml-2 hidden md:inline">Dashboard</span>
     </a>
 
     <a href="{{ url_for('raffles.raffles') }}"
-       class="block px-4 py-2 hover:bg-gray-700" title="Rifas">
+       class="block px-4 py-2 hover:bg-gray-700 text-center md:text-left" title="Rifas">
        <i class="fas fa-crown"></i>
        <span class="ml-2 hidden md:inline">Rifas</span>
     </a>
 
     <a href="{{ url_for('payments.payments') }}"
-       class="block px-4 py-2 hover:bg-gray-700" title="Pagos">
+       class="block px-4 py-2 hover:bg-gray-700 text-center md:text-left" title="Pagos">
        <i class="fas fa-money-bill-wave"></i>
        <span class="ml-2 hidden md:inline">Pagos</span>
     </a>
 
 
     <a href="{{ url_for('users.users') }}"
-       class="block px-4 py-2 hover:bg-gray-700" title="Usuarios">
+       class="block px-4 py-2 hover:bg-gray-700 text-center md:text-left" title="Usuarios">
         <i class="fas fa-users"></i>
         <span class="ml-2 hidden md:inline">Usuarios</span>
     </a>

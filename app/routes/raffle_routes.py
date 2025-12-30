@@ -23,6 +23,22 @@ def raffles():
         "raffles/raffles.html",
         raffles=raffles
     )
+    
+@raffle_bp.route("/raffles/create", methods=["GET", "POST"])
+@login_required
+@role_required("seller","admin")
+def create():
+    if request.method == "POST":
+        data = request.form
+        if not data["total_numbers"] or not data["price_per_number"]:
+            flash("Datos incompletos")
+            return redirect(url_for("raffles.create"))
+        create_raffle(request.form)
+        flash("Rifa creada")
+        return redirect(url_for("raffles.raffles"))
+    return render_template("raffles/create_raffle.html")
+
+
 
 @raffle_bp.route("/<int:raffle_id>/numbers")
 def available_numbers(raffle_id):
@@ -56,11 +72,6 @@ def public_winner(raffle_id):
         user=user
     )
 
-
-
-
-
-
 @raffle_bp.route("/raffles/<int:raffle_id>")
 def raffle_detail(raffle_id):
     return render_template(
@@ -78,17 +89,6 @@ def buy(raffle_id):
     except Exception as e:
         flash(str(e))
     return redirect(url_for("raffles.raffle_detail", raffle_id=raffle_id))
-
-
-@raffle_bp.route("/raffles/create", methods=["GET", "POST"])
-@login_required
-@role_required("seller")
-def create():
-    if request.method == "POST":
-        create_raffle(request.form)
-        flash("Rifa creada")
-        #return redirect(url_for("raffle.dashboard"))
-    return render_template("seller/create_raffle.html")
 
 
 @raffle_bp.route("/raffles/<int:raffle_id>/draw")

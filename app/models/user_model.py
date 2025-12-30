@@ -6,6 +6,13 @@ class RolUsuario:
     client = "client"
     seller = "seller"
     admin = "admin"
+    
+    def values():
+        return [
+            RolUsuario.client,
+            RolUsuario.seller,
+            RolUsuario.admin
+        ]
 
 
 class User(db.Model):

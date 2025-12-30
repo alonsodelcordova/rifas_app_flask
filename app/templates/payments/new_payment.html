@@ -1,15 +1,16 @@
-{% extends 'admin/base_admin.html' %}
+{% extends "dashboard/layout.html" %}
 
-{% block content %}
+{% block dashboard_content %}
 <div class="bg-white rounded-xl shadow p-6">
   <h2 class="text-xl font-bold mb-4">Nuevo pago</h2>
 
-  <form action="{{ url_for('admin.new_payment') }}" method="POST">
+  <form action="{{ url_for('payments.new_payment') }}" method="POST">
     <div class="my-4">
       <label for="method">Método:</label>
       <select name="method" id="method" class="border border-gray-300 rounded-lg px-4 py-2 w-full">
-        <option value="cash">Efectivo</option>
-        <option value="card">Tarjeta</option>
+        {% for m in metodos_pagos %}
+        <option value="{{ m }}">{{ m }}</option>
+        {% endfor %}
       </select>
     </div>
 

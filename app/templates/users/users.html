@@ -2,9 +2,21 @@
 
 {% block dashboard_content %}
 <div class="bg-white rounded-xl shadow p-6">
+  <div class="flex justify-between items-center">
+    <h2 class="text-xl font-bold">
+      <i class="fas fa-users text-yellow-500"></i>
+      <span class="ml-2">Usuarios</span>
+    </h2>
+
+    <a href="{{ url_for('users.new_user') }}" class="bg-green-500 text-white px-3 py-1 rounded-xl hover:bg-green-600">
+      <i class="fas fa-plus"></i> Nuevo
+    </a>
+
+  </div>
+
   <h2 class="text-xl font-bold mb-4">Usuarios</h2>
 
-  <table class="w-full text-left">
+  <table class=" w-full text-left border-collapse table-auto">
     <thead>
       <tr class="border-b">
         <th>Nombre</th>
@@ -16,7 +28,6 @@
     <tbody>
       {% for user in users %}
       <tr class="border-b">
-        <td>{{ user.name }}</td>
         <td>{{ user.username }}</td>
         <td>
           <span class="px-2 py-1 rounded text-sm
@@ -30,8 +41,9 @@
           </span>
         </td>
         <td>
-          <a href="#" class="text-blue-500 hover:underline">
-            Ver
+          <a class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600"
+             href="{{ url_for('users.user_detail', id=user.id) }}">
+            Eliminar
           </a>
         </td>
       </tr>

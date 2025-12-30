@@ -2,10 +2,18 @@ from app.extensions import db
 from datetime import datetime
 
 class MetodoPayment:
-    yape = "yape"
     cash = "cash"
+    yape = "yape"
     card = "card"
     transfer = "transfer"
+    
+    def values():
+        return [
+            MetodoPayment.yape,
+            MetodoPayment.cash,
+            MetodoPayment.card,
+            MetodoPayment.transfer
+        ]
 
 class EstadoPayment:
     pending = "pending"

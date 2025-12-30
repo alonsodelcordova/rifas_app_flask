@@ -5,6 +5,7 @@ from app.extensions import db, bcrypt
 from app.models import User, RolUsuario
 from flask_login import login_user, logout_user, login_required
 import json
+from app.services.users_service import crear_usuario
 
 auth_blueprint = Blueprint(
     "auth",
@@ -47,30 +48,11 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = User.query.filter_by(username=username).first()
-        if user is not None:
-            return render_template('register.html', error='Username already exists')
-        else:
-            hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
-            new_user = User(username=username, password=hashed_password)
-            db.session.add(new_user)
-            db.session.commit()
-            flash('Registro exitoso')
-            return redirect(url_for('auth.login'))
+        role = RolUsuario.client
+        data = crear_usuario(username, password, role)
+        flash(data["message"])
+        return redirect(url_for('auth.index'))
     else:
         return render_template('auth/register.html')
 
 
-
-@auth_blueprint.route('/api/login', methods=['GET', 'POST'])
-def api_login():
-    if request.method == 'POST':
-        username = request.form['username']
-        password = request.form['password']
-        user = User.query.filter_by(username=username).first()
-        if user is not None and bcrypt.check_password_hash(user.password, password):
-            return json.dumps({'success': True})
-        else:
-            return json.dumps({'success': False})
-    else:
-        return json.dumps({'success': False})

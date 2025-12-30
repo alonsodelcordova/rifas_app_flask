@@ -52,10 +52,11 @@ def draw_raffle(raffle_id):
 def create_raffle(data):
     raffle = Raffle(
         title=data["title"],
-        price=data["price"],
+        price_per_number=data["price_per_number"],
         total_numbers=data["total_numbers"],
-        seller_id=current_user.id,
-        status=EstadoRaffle.draft
+        created_by=current_user.id,
+        status=EstadoRaffle.draft,
+        description=data["description"]
     )
     db.session.add(raffle)
     db.session.commit()
