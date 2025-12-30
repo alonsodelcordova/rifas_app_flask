@@ -1,0 +1,29 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+
+  <div class="bg-white p-6 rounded-xl shadow">
+    <h3 class="text-gray-500">Rifas activas</h3>
+    <p class="text-3xl font-bold ">{{ stats.active_raffles }}</p>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow">
+    <h3 class="text-gray-500">Números vendidos</h3>
+    <p class="text-3xl font-bold">{{ stats.sold_numbers }}</p>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow">
+    <h3 class="text-gray-500">Ingresos</h3>
+    <p class="text-3xl font-bold">S/ {{ stats.total_income }}</p>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow">
+    <h3 class="text-gray-500">Usuarios</h3>
+    <p class="text-3xl font-bold">{{ stats.users }}</p>
+  </div>
+
+</div>
+{% endblock %}

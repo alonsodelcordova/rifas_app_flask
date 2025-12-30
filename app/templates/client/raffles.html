@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+<!-- Content -->
+{% block content %}
+<div class="p-4">
+
+    {% for rifa in raffles %}
+    <div class="bg-white p-4 rounded shadow mb-4">
+        <h2 class="font-bold">{{ rifa.title }}</h2>
+        <p>S/ {{ rifa.price }}</p>
+        <a href="{{ url_for('client.raffle_detail', raffle_id=rifa.id) }}" class="text-blue-500">Ver</a>
+    </div>
+    {% endfor %}
+
+    
+
+</div>
+{% endblock %}

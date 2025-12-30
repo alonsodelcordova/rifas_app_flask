@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="p-3 grid grid-cols-1 md:grid-cols-4 gap-6">
+
+    <div class="bg-green-500 p-6 rounded-xl shadow">
+        <h3 class="text-white">Rifas creadas</h3>
+        <div class="text-3xl font-bold ">{{ stats.raffles }}</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow m-2">
+            <h3 class="text-gray-500">Números vendidos</h3>
+            <p class="text-3xl font-bold">{{ stats.sold_numbers }}</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow m-2">
+            <h3 class="text-gray-500">Ingresos</h3>
+            <p class="text-3xl font-bold">S/ {{ stats.total_income }}</p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow m-2">
+            <h3 class="text-gray-500">Clientes</h3>
+            <p class="text-3xl font-bold">{{ stats.clients }}</p>
+        </div>
+
+    </div>
+</div>
+{% endblock %}

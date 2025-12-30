@@ -1,0 +1,16 @@
+<header class="bg-white shadow px-6 py-4 flex justify-between items-center">
+  <h1 class="text-xl font-semibold">
+    {% block header %}Dashboard{% endblock %}
+  </h1>
+
+  <div class="flex items-center gap-4">
+    <span class="text-gray-600">
+      {{ current_user.name }}
+    </span>
+
+    <a href="{{ url_for('auth.logout') }}"
+       class="text-red-500 hover:underline">
+      Salir
+    </a>
+  </div>
+</header>

@@ -1,0 +1,46 @@
+<aside class="sm:w-64 bg-gray-900 text-white min-h-screen">
+  <div class="p-4 text-xl font-bold ">
+    <i class="fas fa-crown text-yellow-500"></i>
+    <span class="ml-2 hidden md:inline">Rifas Admin</span>
+  </div>
+
+  <nav class="mt-6">
+    <a href="{{ url_for('admin.dashboard') }}"
+       class="block px-4 py-2 hover:bg-gray-700" title="Dashboard">
+      <i class="fas fa-tachometer-alt"></i>
+       <span class="ml-2 hidden md:inline">Dashboard</span>
+    </a>
+
+    <a href="{{ url_for('admin.raffles') }}"
+       class="block px-4 py-2 hover:bg-gray-700" title="Rifas">
+       <i class="fas fa-crown"></i>
+       <span class="ml-2 hidden md:inline">Rifas</span>
+    </a>
+
+    <a href="{{ url_for('admin.payments') }}"
+       class="block px-4 py-2 hover:bg-gray-700" title="Pagos">
+       <i class="fas fa-money-bill-wave"></i>
+       <span class="ml-2 hidden md:inline">Pagos</span>
+    </a>
+
+
+    <a href="{{ url_for('admin.users') }}"
+       class="block px-4 py-2 hover:bg-gray-700" title="Usuarios">
+        <i class="fas fa-users"></i>
+        <span class="ml-2 hidden md:inline">Usuarios</span>
+    </a>
+
+  </nav>
+
+  <hr class="my-4">
+
+  <!-- logout abajo de sidebar -->
+  <div class="flex justify-center">
+    <a href="{{ url_for('auth.logout') }}"
+       class="text-red-500 hover:underline" title="Salir">
+        <i class="fas fa-sign-out-alt"></i>
+        <span class="ml-2 hidden md:inline">Salir</span>
+    </a>
+  </div>
+
+</aside>

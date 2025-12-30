@@ -1,0 +1,54 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block content %}
+<div class="bg-white rounded-xl shadow p-6">
+    <div class="flex justify-between align-center">
+        <h2 class="text-xl font-bold">Pagos pendientes</h2>
+        <a href="{{ url_for('admin.new_payment') }}" class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+            <i class="fas fa-plus"></i>
+            Nuevo
+        </a>
+    </div>
+
+
+  {% if payments %}
+  <table class="w-full text-left">
+    <thead>
+      <tr class="border-b">
+        <th>ID</th>
+        <th>Compra</th>
+        <th>Método</th>
+        <th>Monto</th>
+        <th>Referencia</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in payments %}
+      <tr class="border-b">
+        <td>#{{ p.id }}</td>
+        <td>#{{ p.purchase_id }}</td>
+        <td>{{ p.method }}</td>
+        <td>S/ {{ p.amount }}</td>
+        <td>{{ p.reference_code }}</td>
+        <td class="flex gap-2">
+          <a href="{{ url_for('admin.confirm_payment_admin', payment_id=p.id) }}"
+             class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+            Confirmar
+          </a>
+
+          <a href="{{ url_for('admin.reject_payment_admin', payment_id=p.id) }}"
+             class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+            Rechazar
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+    <p class="text-gray-500">No hay pagos pendientes</p>
+  {% endif %}
+</div>
+{% endblock %}
+

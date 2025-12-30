@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ raffle.title }}</title>
+    <!-- Tailwind CSS -->
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css" integrity="sha512-iBBXm8fW90+nuLcSKlbmrPcLa0OT92xO1BIsZ+ywDWZCvqsWgccV3gFoRBv0z+8dLJgyAHIhR35VZc2oM/gI1w==" crossorigin="anonymous" />
+
+</head>
+
+<body class="bg-gray-100 min-h-screen flex items-center justify-center">
+
+  <div class="bg-white p-8 rounded-xl shadow text-center">
+    <h1 class="text-2xl font-bold mb-4">
+      🎟️ {{ raffle.title }}
+    </h1>
+
+    <p class="text-gray-600 mb-4">
+      El sorteo aún no se ha realizado.
+    </p>
+
+    <p class="text-sm text-gray-500">
+      Vuelve más tarde para ver el ganador.
+    </p>
+  </div>
+
+</body>
+</html>

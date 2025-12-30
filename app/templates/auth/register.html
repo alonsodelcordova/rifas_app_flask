@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+<!-- Content -->
+{% block content %}
+
+<!-- max width 500 px-->
+
+<div class=" max-w-2xl mx-auto">
+
+    <div class="bg-green-500 shadow-lg rounded-lg p-6 m-4">
+        <h1 class="text-4xl font-bold text-center">
+            RIFAS - REGISTRO
+        </h1>
+        <h2 class="text-xl text-center">
+            Registro para acceder a la aplicación
+        </h2>
+        <div class="m-auto">
+            <form action="/register" method="POST">
+                <div class="my-4 ">
+                    <label for="username">Username:</label>
+                    <input type="text" id="username" name="username"
+                        class="border border-gray-300 rounded-lg px-4 py-2 w-full">
+                </div>
+                <div>
+                    <label for="password">Password:</label>
+                    <input type="password" id="password" name="password"
+                        class="border border-gray-300 rounded-lg px-4 py-2 w-full">
+                </div>
+                <div class="flex justify-center">
+                    <button class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg m-2">
+                        <i class="fas fa-user-plus"></i>
+                        Registrarse
+                    </button>
+                </div>
+        </div>
+        </form>
+        <div class="flex justify-center">
+            <a href="/login" class="text-white">
+                <i class="fas fa-sign-in-alt"></i>
+                Login
+            </a>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,42 @@
+{% extends 'admin/base_admin.html' %}
+
+{% block content %}
+<div class="bg-white rounded-xl shadow p-6">
+  <h2 class="text-xl font-bold mb-4">Usuarios</h2>
+
+  <table class="w-full text-left">
+    <thead>
+      <tr class="border-b">
+        <th>Nombre</th>
+        <th>Usuario</th>
+        <th>Rol</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for user in users %}
+      <tr class="border-b">
+        <td>{{ user.name }}</td>
+        <td>{{ user.username }}</td>
+        <td>
+          <span class="px-2 py-1 rounded text-sm
+            {% if user.is_admin %}
+              bg-green-100 text-green-700
+            {% else %}
+              bg-gray-200
+            {% endif %}
+          ">
+            {{ user.role }}
+          </span>
+        </td>
+        <td>
+          <a href="#" class="text-blue-500 hover:underline">
+            Ver
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

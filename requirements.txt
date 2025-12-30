@@ -1,0 +1,8 @@
+flask
+Flask-SQLAlchemy
+flask-migrate
+flask-login
+flask-bcrypt
+requests
+python-dotenv
+reportlab
