@@ -5,39 +5,41 @@ from app.services.purchase_service import (
     get_my_purchases
 )
 from app.decorators import role_required
-from flask_login import login_required
+from flask_login import login_required, current_user
+from app.models import MetodoPayment, Purchase
 
 purchase_bp = Blueprint("purchase", __name__, url_prefix="/purchases")
 
 
-@purchase_bp.route("/my")
+@purchase_bp.route("/purchases")
 @login_required
 @role_required("client", "admin")
-def my_purchases():
+def purchases():
     return render_template(
-        "client/my_purchases.html",
+        "purchases/purchases.html",
         purchases=get_my_purchases()
     )
 
-
+# reservar números
 @purchase_bp.route("/reserve", methods=["POST"])
+@login_required
 def reserve():
     data = request.get_json()
 
-    user_id = data.get("user_id")
     raffle_id = data.get("raffle_id")
     numbers = data.get("numbers")  # [12, 25, 30]
 
-    if not all([user_id, raffle_id, numbers]):
+    if not all([raffle_id, numbers]):
         return jsonify({"error": "Datos incompletos"}), 400
-
+    user_id = current_user.id
     try:
         purchase = reserve_numbers(user_id, raffle_id, numbers)
 
         return jsonify({
             "message": "Números reservados",
             "purchase_id": purchase.id,
-            "total": purchase.total_amount
+            "total": purchase.total_amount,
+            "success": True
         }), 201
 
     except Exception as e:
@@ -52,19 +54,15 @@ def confirm(purchase_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 400
 
-from app.models import Purchase
 
-@purchase_bp.route("/user/<int:user_id>", methods=["GET"])
-def purchases_by_user(user_id):
-    purchases = Purchase.query.filter_by(user_id=user_id).all()
+@purchase_bp.route("/purchases/<int:purchase_id>")
+def purchase_detail(purchase_id):
+    purchase = Purchase.query.get_or_404(purchase_id)
+    
+    metodos_pagos = MetodoPayment.values()
 
-    data = []
-    for p in purchases:
-        data.append({
-            "id": p.id,
-            "total": p.total_amount,
-            "status": p.status,
-            "created_at": p.created_at
-        })
-
-    return jsonify(data)
+    return render_template(
+        "purchases/purchase_detail.html",
+        purchase=purchase,
+        metodos_pagos=metodos_pagos
+    )

@@ -35,3 +35,14 @@ def get_seller_stats():
     }
 
     return stats
+
+def get_client_stats():
+    id_client = current_user.id
+    raffles = Raffle.query.filter_by(status="active").all()
+    sold_numbers = RaffleNumber.query.filter_by(status="sold").count()
+    pending_numbers = RaffleNumber.query.filter_by(status="reserved").count()
+    return {
+        "active_raffles": len(raffles),
+        "sold_numbers": sold_numbers,
+        "pending_numbers": pending_numbers
+    }

@@ -6,7 +6,7 @@
 {% if current_user.role == "admin" %}
 <div class="bg-white rounded-xl shadow p-6">
 
-  <div class="flex justify-between items-center">
+  <div class="flex justify-between items-center mb-4">
     <h2 class="text-xl font-bold">
       <i class="fas fa-crown text-yellow-500"></i>
       <span class="ml-2">Rifas</span>
@@ -46,8 +46,9 @@
 
         </td>
         <td>
-          <a href="#" class="text-blue-500 hover:underline">
-            Ver
+          <a href="{{ url_for('raffles.raffle_detail', raffle_id=rifa.id) }}"
+            class="text-blue-500 hover:underline px-2">
+            <i class="fas fa-eye"></i>
           </a>
           {% if rifa.status == 'active' %}
           <a href="{{ url_for('raffles.draw_raffle_admin', raffle_id=rifa.id) }}"
@@ -55,6 +56,21 @@
             Sortear
           </a>
           {% endif %}
+
+          {% if rifa.status == 'draft' %}
+          <a href="{{ url_for('raffles.activate_raffle_admin', raffle_id=rifa.id) }}"
+            class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
+            Activar
+          </a>
+          {% endif %}
+
+          {% if  current_user.role == "admin" %}
+          <a href="{{ url_for('raffles.delete_raffle_admin', raffle_id=rifa.id) }}"
+            class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
+            <i class="fas fa-trash-alt"></i>
+          </a>
+          {% endif %}
+
         </td>
       </tr>
       {% endfor %}
@@ -71,13 +87,16 @@
 {% endif %}
 
 {% if current_user.role == "client" %}
-<div class="p-4">
+<div class="p-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
 
   {% for rifa in raffles %}
   <div class="bg-white p-4 rounded shadow mb-4">
-    <h2 class="font-bold">{{ rifa.title }}</h2>
-    <p>S/ {{ rifa.price }}</p>
-    <a href="{{ url_for('client.raffle_detail', raffle_id=rifa.id) }}" class="text-blue-500">Ver</a>
+    <h2 class="font-bold">{{ rifa.title.upper() }}</h2>
+    <p>S/ {{ rifa.price_per_number }}</p>
+    <p>{{ rifa.description }}</p>
+    <a href="{{ url_for('raffles.raffle_detail', raffle_id=rifa.id) }}" class="text-blue-500 bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded ">
+      Ver
+    </a>
   </div>
   {% endfor %}
 

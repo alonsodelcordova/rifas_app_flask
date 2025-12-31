@@ -1,4 +1,25 @@
 {% extends "dashboard/layout.html" %}
 {% block dashboard_content %}
-<h1>Mis compras</h1>
+<h1>Panel de clientes</h1>
+
+<div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+  <div class="bg-white p-6 rounded-xl shadow">
+    <h3 class="text-gray-500">Rifas activas</h3>
+    <p class="text-3xl font-bold ">{{ stats.active_raffles }}</p>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow">
+    <h3 class="text-gray-500">Tickets comprados</h3>
+    <p class="text-3xl font-bold">{{ stats.sold_numbers }}</p>
+  </div>
+
+  <div class="bg-white p-6 rounded-xl shadow">
+    <h3 class="text-gray-500">Tickets pendientes</h3>
+    <p class="text-3xl font-bold">{{ stats.pending_numbers }}</p>
+  </div>
+
+</div>
+
+
 {% endblock %}

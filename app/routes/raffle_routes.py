@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, render_template, flash, request, redirect, url_for
 from app.models import Raffle, Winner, RaffleNumber, User, EstadoRaffleNumber
-from app.services.raffles_service import get_active_raffles, get_raffle_detail, get_my_purchases
+from app.services.raffles_service import get_active_raffles_cliente, get_raffle_detail, activate_raffle, delete_raffle
 from app.services.purchase_service import buy_numbers
 from flask_login import login_required, current_user
 from app.decorators import role_required
@@ -11,11 +11,13 @@ from flask import send_from_directory
 
 raffle_bp = Blueprint("raffles", __name__, url_prefix="/raffles")
 
+
+# consulta de rifas
 @raffle_bp.route("/raffles")
 def raffles():
     raffles = []
     if current_user.role == "client":
-        raffles = get_active_raffles()
+        raffles = get_active_raffles_cliente()
     elif current_user.role == "admin":
         raffles = Raffle.query.all()
 
@@ -24,30 +26,59 @@ def raffles():
         raffles=raffles
     )
     
+# creación de rifa
 @raffle_bp.route("/raffles/create", methods=["GET", "POST"])
 @login_required
 @role_required("seller","admin")
 def create():
     if request.method == "POST":
         data = request.form
-        if not data["total_numbers"] or not data["price_per_number"]:
+        title = request.form["title"]
+        price_per_number = request.form["price_per_number"]
+        total_numbers = request.form["total_numbers"]
+        description = request.form["description"]
+        if not title or not price_per_number or not total_numbers:
             flash("Datos incompletos")
             return redirect(url_for("raffles.create"))
-        create_raffle(request.form)
-        flash("Rifa creada")
+        message = create_raffle(
+            title = title,
+            price_per_number = float(price_per_number),
+            total_numbers = int(total_numbers),
+            description = description
+        )
+        flash(message)
         return redirect(url_for("raffles.raffles"))
     return render_template("raffles/create_raffle.html")
 
+# activar rifa para que los clientes puedan comprar
+@raffle_bp.route("/<int:raffle_id>/activate", methods=["GET"])
+@login_required
+@role_required("admin")
+def activate_raffle_admin(raffle_id):
+    raffle = activate_raffle(raffle_id)
+    flash("Rifa activada correctamente")
+    return redirect(url_for("raffles.raffles"))
+
+# eliminar rifa
+@raffle_bp.route("/<int:raffle_id>/delete", methods=["GET"])
+@login_required
+@role_required("admin")
+def delete_raffle_admin(raffle_id):
+    data = delete_raffle(raffle_id)
+    flash(data["message"])
+    return redirect(url_for("raffles.raffles"))
 
 
-@raffle_bp.route("/<int:raffle_id>/numbers")
-def available_numbers(raffle_id):
-    numbers = RaffleNumber.query.filter_by(
-        raffle_id=raffle_id,
-        status=EstadoRaffleNumber.available
-    ).all()
+# detalle de rifa
+@raffle_bp.route("/raffles/<int:raffle_id>")
+def raffle_detail(raffle_id):
+    
+    return render_template(
+        "raffles/raffle_detail.html",
+        raffle=get_raffle_detail(raffle_id)
+    )
+    
 
-    return jsonify([n.number for n in numbers])
 
 @raffle_bp.route("/<int:raffle_id>/winner")
 def public_winner(raffle_id):
@@ -72,23 +103,9 @@ def public_winner(raffle_id):
         user=user
     )
 
-@raffle_bp.route("/raffles/<int:raffle_id>")
-def raffle_detail(raffle_id):
-    return render_template(
-        "client/raffle_detail.html",
-        raffle=get_raffle_detail(raffle_id)
-    )
 
-@raffle_bp.route("/raffles/<int:raffle_id>/buy", methods=["POST"])
-@login_required
-def buy(raffle_id):
-    numbers = request.form.getlist("numbers")
-    try:
-        buy_numbers(raffle_id, numbers)
-        flash("Compra realizada")
-    except Exception as e:
-        flash(str(e))
-    return redirect(url_for("raffles.raffle_detail", raffle_id=raffle_id))
+
+
 
 
 @raffle_bp.route("/raffles/<int:raffle_id>/draw")

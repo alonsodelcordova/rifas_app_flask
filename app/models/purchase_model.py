@@ -6,6 +6,7 @@ class EstadoPurchase:
     paid = "paid"
     cancelled = "cancelled"
 
+# compra de numeros
 class Purchase(db.Model):
     __tablename__ = "purchases"
 
@@ -18,7 +19,12 @@ class Purchase(db.Model):
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
 
     items = db.relationship("PurchaseItem", backref="purchase", lazy=True)
+    user = db.relationship("User", backref="purchases", uselist=False)
+    raffle = db.relationship("Raffle", backref="purchases", uselist=False)
 
+    @property
+    def total_numbers(self):
+        return [item.raffle_number.number for item in self.items]
 
 class PurchaseItem(db.Model):
     __tablename__ = "purchase_items"

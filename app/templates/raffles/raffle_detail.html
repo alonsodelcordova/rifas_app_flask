@@ -1,0 +1,138 @@
+{% extends 'dashboard/layout.html' %}
+
+{% block dashboard_content %}
+<div class="bg-white rounded-xl shadow p-6" x-data="raffleNumbers()">
+    <div class="flex justify-between items-center mb-4">
+        <h2 class="text-xl font-bold">
+            <i class="fas fa-crown text-yellow-500"></i>
+            <span class="ml-2">Rifa</span>
+        </h2>
+
+        <a href="{{ url_for('raffles.raffles') }}"
+            class="bg-gray-500 text-white px-3 py-1 rounded-xl hover:bg-gray-600">
+            <i class="fas fa-arrow-left"></i>
+            Volver
+        </a>
+
+    </div>
+
+    <h2 class="text-xl font-bold mb-4">Detalle de la rifa</h2>
+
+    <div class="bg-white p-4 rounded shadow mb-4">
+        <h2 class="font-bold">{{ raffle.title }}</h2>
+        <p>S/ {{ raffle.price_per_number }}</p>
+        <p>{{ raffle.description }}</p>
+    </div>
+
+    <div class="bg-white p-4 rounded shadow mb-4">
+        <h2 class="font-bold">Números disponibles</h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            {% for number in raffle.numbers %}
+            <div class="bg-white p-4 rounded shadow mb-4">
+                <div class="flex justify-between">
+                    <div>
+                        <p>Número {{ number.number }}</p>
+                        {% if number.status == 'available' and (current_user.role == "client" or current_user.role ==
+                        "seller") %}
+
+                        <button @click="toggle({{ number.number }})" :class="selected.includes({{ number.number }}) 
+                            ? 'bg-blue-500 text-white' 
+                            : 'bg-gray-200'" class="p-2 rounded text-sm" {% if number.status !='available' %} disabled
+                            {% endif %}>
+                            {{ "%04d"|format(number.number) }}
+                        </button>
+                        {% endif %}
+                    </div>
+                    <div>
+                        {% if number.status == 'available' %}
+                        <span class="px-2 py-1 rounded text-sm bg-green-200">
+                            Disponible
+                        </span>
+                        {% elif number.status == 'reserved' %}
+                        <span class="px-2 py-1 rounded text-sm bg-yellow-200">
+                            Reservado
+                        </span>
+                        {% elif number.status == 'sold' %}
+                        <span class="px-2 py-1 rounded text-sm bg-red-200">
+                            Vendido
+                        </span>
+                        {% endif %}
+                    </div>
+                </div>
+
+            </div>
+            {% endfor %}
+
+        </div>
+        <div>
+            <span>
+                Tienes <span x-text="selected.length"></span> números seleccionados
+            </span>
+        </div>
+        <!-- BOTÓN RESERVAR -->
+        <button @click="reserve()" class="mt-6 bg-green-600 text-white px-6 py-2 rounded"
+            :disabled="selected.length === 0">
+            <i class="fas fa-file"></i> Reservar 
+        </button>
+
+        <!-- BOTÓN COMPRAR -->
+        <button @click="buy()" class="mt-6 bg-blue-600 text-white px-6 py-2 rounded"
+            :disabled="selected.length === 0">
+            <i class="fas fa-credit-card"></i> Comprar
+        </button>
+
+    </div>
+
+</div>
+
+<script>
+    function raffleNumbers() {
+        return {
+            selected: [],
+            loading: false,
+            raffle: {
+                id: "{{ raffle.id }}"
+            },
+            toggle(id) {
+                if (this.selected.includes(id)) {
+                    this.selected = this.selected.filter(n => n !== id)
+                } else {
+                    this.selected.push(id)
+                }
+            },
+
+            async reserve() {
+                this.loading = true
+
+                const res = await fetch(
+                    "{{ url_for('purchase.reserve', raffle_id=raffle.id) }}",
+                    {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            numbers: this.selected,
+                            raffle_id: this.raffle.id
+                        })
+                    }
+                )
+
+                const data = await res.json()
+
+                if (data.success) {
+                    var message = "Números reservados correctamente\n"+
+                        "Total a pagar: " + data.total + "\n";
+                    alert("Números reservados correctamente \n")
+                    window.location.href = "{{ url_for('raffles.raffle_detail', raffle_id=raffle.id) }}"
+                } else {
+                    alert(data.error)
+                }
+
+                this.loading = false
+            }
+        }
+    }
+</script>
+
+
+
+{% endblock %}

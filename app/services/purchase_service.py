@@ -21,51 +21,52 @@ def reserve_numbers(user_id, raffle_id, numbers):
     :param numbers: lista de números a reservar
     """
     try:
-        with db.session.begin():
 
-            raffle_numbers = (
-                db.session.query(RaffleNumber)
-                .filter(
-                    RaffleNumber.raffle_id == raffle_id,
-                    RaffleNumber.number.in_(numbers),
-                    RaffleNumber.status == EstadoRaffleNumber.available
-                )
-                .with_for_update()  # BLOQUEO 
-                .all()
+        raffle_numbers = (
+            db.session.query(RaffleNumber)
+            .filter(
+                RaffleNumber.raffle_id == raffle_id,
+                RaffleNumber.number.in_(numbers),
+                RaffleNumber.status == EstadoRaffleNumber.available,
             )
+            .with_for_update()  # BLOQUEO 
+            .all()
+        )
 
-            if len(raffle_numbers) != len(numbers):
-                raise Exception("Algunos números ya no están disponibles")
+        if len(raffle_numbers) != len(numbers):
+            print("Algunos números ya no están disponibles")
+            raise Exception("Algunos números ya no están disponibles")
 
-            # Crear compra
-            purchase = Purchase(
-                user_id=user_id,
-                raffle_id=raffle_id,
-                status=EstadoPurchase.pending
+        # Crear compra
+        purchase = Purchase(
+            user_id=user_id,
+            raffle_id=raffle_id,
+            status=EstadoPurchase.pending
+        )
+        db.session.add(purchase)
+        db.session.flush()
+
+        total = 0
+
+        for rn in raffle_numbers:
+            rn.status = EstadoRaffleNumber.reserved
+            rn.reserved_at = datetime.utcnow()
+            rn.client_id = user_id
+            item = PurchaseItem(
+                purchase_id=purchase.id,
+                raffle_number_id=rn.id,
+                price=rn.raffle.price_per_number
             )
-            db.session.add(purchase)
-            db.session.flush()
+            db.session.add(item)
+            total += item.price
 
-            total = 0
-
-            for rn in raffle_numbers:
-                rn.status = EstadoRaffleNumber.reserved
-                rn.reserved_at = datetime.utcnow()
-
-                item = PurchaseItem(
-                    purchase_id=purchase.id,
-                    raffle_number_id=rn.id,
-                    price=rn.raffle.price_per_number
-                )
-                db.session.add(item)
-                total += item.price
-
-            purchase.total_amount = total
-
+        purchase.total_amount = total
+        db.session.commit()
         return purchase
 
     except Exception as e:
         db.session.rollback()
+        print(e)
         raise e
 
 def confirm_payment(purchase_id):
@@ -106,34 +107,39 @@ def release_expired_reservations():
 
 
 # TODO: Comprobar que no haya compras pendientes
-def buy_numbers(raffle_id, numbers):
-    with db.session.begin():
+def buy_numbers(raffle_id, number):
+    print(f"comprando números {number}")
+    try:
         purchase = Purchase(
             user_id=current_user.id,
             raffle_id=raffle_id,
             status=EstadoPurchase.pending
         )
         db.session.add(purchase)
+        db.session.flush()
 
-        for num in numbers:
-            raffle_number = RaffleNumber.query.filter_by(
-                raffle_id=raffle_id,
-                number=num,
-                status=EstadoRaffleNumber.available
-            ).with_for_update().first()
+        raffle_number = RaffleNumber.query.filter_by(
+            raffle_id=raffle_id,
+            number=number,
+            status=EstadoRaffleNumber.available
+        ).with_for_update().first()
 
-            if not raffle_number:
-                raise Exception(f"Número {num} no disponible")
+        if not raffle_number:
+            return "Número no disponible"
 
-            raffle_number.status = EstadoRaffleNumber.sold
+        raffle_number.status = EstadoRaffleNumber.reserved
 
-            item = PurchaseItem(
-                purchase=purchase,
-                raffle_number=raffle_number
-            )
-            db.session.add(item)
-
-    return purchase
+        item = PurchaseItem(
+            purchase=purchase,
+            raffle_number=raffle_number
+        )
+        db.session.add(item)
+        db.session.commit()
+        return "Compra realizada"
+    except Exception as e:
+        db.session.rollback()
+        print(e)
+        return "Error al comprar: " + str(e)
 
 def get_my_purchases():
     return Purchase.query.filter_by(user_id=current_user.id).all()

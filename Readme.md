@@ -57,6 +57,7 @@ flask shell: Inicia un intérprete interactivo.
 | ------------------ | :----: | :----: | :---: |
 | Ver rifas          |    ✅   |    ✅   |   ✅   |
 | Comprar números    |    ✅   |    ❌   |   ❌   |
+| Reservar números   |    ✅   |    ❌   |   ❌   |
 | Ver mis compras    |    ✅   |    ❌   |   ❌   |
 | Subir comprobante  |    ✅   |    ❌   |   ❌   |
 | Crear rifa         |    ❌   |    ✅   |   ❌   |

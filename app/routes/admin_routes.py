@@ -7,7 +7,7 @@ import bcrypt
 from datetime import datetime
 from app.decorators import role_required
 from flask import send_from_directory
-from app.services.admin_service import get_seller_stats, get_admin_stats
+from app.services.admin_service import get_seller_stats, get_admin_stats, get_client_stats
 
 admin_blueprint = Blueprint(
     "admin",
@@ -20,7 +20,8 @@ admin_blueprint = Blueprint(
 def dashboard():
     role = current_user.role
     if role == "client":
-        return render_template("dashboard/client_dashboard.html")
+        stats = get_client_stats()
+        return render_template("dashboard/client_dashboard.html", stats=stats)
     elif role == "seller":
         stats = get_seller_stats()
         return render_template("dashboard/seller_dashboard.html", stats=stats)

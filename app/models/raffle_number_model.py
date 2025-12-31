@@ -16,12 +16,15 @@ class RaffleNumber(db.Model):
 
     reserved_at = db.Column(db.DateTime)
     sold_at = db.Column(db.DateTime)
+    
+    client_id = db.Column(db.Integer, db.ForeignKey("users.id"), nullable=True)
 
     purchase_item = db.relationship(
         "PurchaseItem",
         back_populates="raffle_number",
         uselist=False
     )
+    
 
     __table_args__ = (
         db.UniqueConstraint("raffle_id", "number", name="uq_raffle_number"),

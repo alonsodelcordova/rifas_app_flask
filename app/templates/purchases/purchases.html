@@ -1,0 +1,61 @@
+{% extends "dashboard/layout.html" %}
+
+{% block dashboard_content %}
+<div class="bg-white rounded-xl shadow p-6">
+  <div class="flex justify-between items-center">
+    <h2 class="text-xl font-bold">
+      <i class="fas fa-credit-card text-yellow-500"></i>
+      <span class="ml-2">Compras</span>
+    </h2>
+
+  </div>
+
+  <h2 class="text-xl font-bold mb-4">Compras</h2>
+
+  <table class=" w-full text-left border-collapse table-auto">
+    <thead>
+      <tr class="border-b">
+        <th>Usuario</th>
+        <th>Raffle</th>
+        <th>Números</th>
+        <th>Total</th>
+        <th>Estado</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for purchase in purchases %}
+      <tr class="border-b">
+        <td>{{ purchase.user.username }}</td>
+        <td>{{ purchase.raffle.title }}</td>
+        <td>
+            {% for number in purchase.total_numbers %}
+            <span class="px-2 py-1 rounded text-sm bg-green-100 text-green-700">
+              {{ number }}
+            </span>
+            {% endfor %}
+        </td>
+        <td>S/ {{ purchase.total_amount }}</td>
+        <td>
+          <span class="px-2 py-1 rounded text-sm
+            {% if purchase.status == 'paid' %}
+              bg-green-100 text-green-700
+            {% else %}
+              bg-gray-200
+            {% endif %}
+          ">
+            {{ purchase.status }}
+          </span>
+        </td>
+        <td>
+          <a class="bg-red-500 text-white px-3 py-1 rounded hover:bg-green-600"
+             href="{{ url_for('purchase.purchase_detail', purchase_id=purchase.id) }}">
+            <i class="fas fa-eye"></i>
+          </a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

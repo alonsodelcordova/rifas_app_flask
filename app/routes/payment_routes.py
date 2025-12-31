@@ -5,54 +5,39 @@ from app.decorators import role_required
 from app.models import RaffleNumber, Purchase, MetodoPayment
 from datetime import datetime
 from app.extensions import db
+from flask import jsonify
+from app.services.payments_service import list_payments, reallize_payment_service
 
 payment_bp = Blueprint("payments", __name__)
 
 
 @payment_bp.route("/payments")
 @login_required
-@role_required("admin")
 def payments():
     payments = Payment.query.filter_by(status="pending").all()
     return render_template("payments/payments.html", payments=payments)
 
 
 
-@payment_bp.route("/payments/new", methods=["GET", "POST"])
+@payment_bp.route("/payments/realize", methods=["POST"])
 @login_required
-@role_required("admin")
-def new_payment():
-    if request.method == "POST":
-        method = request.form["method"]
-        amount = request.form["amount"]
-        reference_code = request.form["reference_code"]
+def reallize_payment():
+    purchase_id = request.form.get("purchase_id")
+    method = request.form.get("method")
+    amount = request.form.get("amount")
+    reference_code = request.form.get("reference_code")
 
-        if not method or not amount or not reference_code:
-            flash("Datos incompletos")
-            return redirect(url_for("payments.payments"))
-        try:
-            amount = float(amount)
-        except ValueError:
-            flash("Monto no válido")
-            return redirect(url_for("payments.payments"))
-
-        with db.session.begin():
-            payment = Payment(
-                purchase_id=None,
-                method=method,
-                amount=amount,
-                reference_code=reference_code,
-                status="pending"
-            )
-            db.session.add(payment)
-            db.session.commit()
-
-            flash("Pago creado correctamente")
-            return redirect(url_for("payments.payments"))
+    if not method or not amount or not reference_code or not purchase_id:
+        flash("Datos incompletos")
+        return redirect(url_for("payments.payments"))
+    
+    data = reallize_payment_service(purchase_id, method, amount, reference_code)
+    if data["success"]:
+        flash(data["message"])
     else:
-        metodos_pagos = MetodoPayment.values()
-        return render_template("payments/new_payment.html", metodos_pagos=metodos_pagos)
-
+        flash(data["error"])
+    return redirect(url_for("payments.payments"))
+    
 
 
 
