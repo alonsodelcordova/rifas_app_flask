@@ -142,4 +142,9 @@ def buy_numbers(raffle_id, number):
         return "Error al comprar: " + str(e)
 
 def get_my_purchases():
-    return Purchase.query.filter_by(user_id=current_user.id).all()
+    if current_user.role == "client":
+        return Purchase.query.filter_by(user_id=current_user.id).all()
+    elif current_user.role == "admin":
+        return Purchase.query.all()
+    else:
+        return []

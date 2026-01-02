@@ -18,7 +18,8 @@
         <th>Método</th>
         <th>Monto</th>
         <th>Referencia</th>
-        <th>Acciones</th>
+        <th>Estado</th>
+        <th></th>
       </tr>
     </thead>
     <tbody>
@@ -29,7 +30,20 @@
         <td>{{ p.method }}</td>
         <td>S/ {{ p.amount }}</td>
         <td>{{ p.reference_code }}</td>
+        <td>
+          <span class="px-2 py-1 rounded text-sm
+            {% if p.status == 'pending' %}
+              bg-green-100 text-green-700
+            {% else %}
+              bg-gray-200
+            {% endif %}
+          ">
+            {{ p.status }}
+          </span>
+        </td>
         <td class="flex gap-2">
+          
+          {% if p.status == 'pending' and current_user.role == 'admin' %}
           <a href="{{ url_for('payments.confirm_payment_admin', payment_id=p.id) }}"
              class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600">
             Confirmar
@@ -39,6 +53,10 @@
              class="bg-red-500 text-white px-3 py-1 rounded hover:bg-red-600">
             Rechazar
           </a>
+          {% endif %}
+
+
+
         </td>
       </tr>
       {% endfor %}

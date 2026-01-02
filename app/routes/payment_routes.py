@@ -6,7 +6,7 @@ from app.models import RaffleNumber, Purchase, MetodoPayment
 from datetime import datetime
 from app.extensions import db
 from flask import jsonify
-from app.services.payments_service import list_payments, reallize_payment_service
+from app.services.payments_service import list_payments, reallize_payment_service, confirm_payment_service
 
 payment_bp = Blueprint("payments", __name__)
 
@@ -14,7 +14,7 @@ payment_bp = Blueprint("payments", __name__)
 @payment_bp.route("/payments")
 @login_required
 def payments():
-    payments = Payment.query.filter_by(status="pending").all()
+    payments = list_payments()
     return render_template("payments/payments.html", payments=payments)
 
 
@@ -54,25 +54,11 @@ def payment_detail(id):
 @login_required
 @role_required("admin")
 def confirm_payment_admin(payment_id):
-    payment = Payment.query.get_or_404(payment_id)
-    purchase = Purchase.query.get(payment.purchase_id)
-
-    if payment.status != "pending":
-        flash("Pago ya procesado")
-        return redirect(url_for("payments.payments"))
-
-    with db.session.begin():
-        payment.status = "confirmed"
-        payment.paid_at = datetime.utcnow()
-
-        purchase.status = "paid"
-
-        for item in purchase.items:
-            rn = RaffleNumber.query.get(item.raffle_number_id)
-            rn.status = "sold"
-            rn.sold_at = datetime.utcnow()
-
-    flash("Pago confirmado correctamente")
+    data = confirm_payment_service(payment_id)
+    if data["success"]:
+        flash(data["message"])
+    else:
+        flash(data["error"])
     return redirect(url_for("payments.payments"))
 
 

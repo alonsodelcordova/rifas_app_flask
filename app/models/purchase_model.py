@@ -5,6 +5,7 @@ class EstadoPurchase:
     pending = "pending"
     paid = "paid"
     cancelled = "cancelled"
+    
 
 # compra de numeros
 class Purchase(db.Model):

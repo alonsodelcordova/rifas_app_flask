@@ -5,7 +5,7 @@
     <div class="flex justify-between items-center">
         <h2 class="text-xl font-bold">
             <i class="fas fa-credit-card text-yellow-500"></i>
-            <span class="ml-2">Compra</span>
+            <span class="ml-2">Compra #{{ purchase.id }}</span>
         </h2>
 
         <a href="{{ url_for('purchase.purchases') }}"
@@ -18,80 +18,84 @@
 
     <h2 class="text-xl font-bold mb-4">Detalle de la compra</h2>
 
-    <div class="bg-white p-4 rounded shadow mb-4">
-        <h2 class="font-bold">Usuario</h2>
-        <p>{{ purchase.user.username }}</p>
-    </div>
 
-    <div class="bg-white p-4 rounded shadow mb-4">
-        <h2 class="font-bold">Raffle</h2>
-        <p>{{ purchase.raffle.title }}</p>
-    </div>
+    <p>
+        Usuario: <span class="font-bold">{{ purchase.user.username }}</span>
+    </p>
+    <p>
+        Raffle: <span class="font-bold">{{ purchase.raffle.title }}</span>
+    </p>
+
+    <p>
+        Estado de la compra: <span class="font-bold">{{ purchase.status }}</span>
+    </p>
+    <p>
+        Total a pagar: <span class="font-bold">S/ {{ purchase.total_amount }}</span>
+    </p>
+    {% if purchase.status == 'paid' %}
+    <p>
+        Pago realizado: <span class="font-bold">S/ {{ purchase.total_amount }}</span>
+    </p>
+    <p>
+        Fecha de pago: <span class="font-bold">{{ purchase.payments[0].paid_at.strftime('%d/%m/%Y %H:%M %p') }}</span>
+    </p>
+    {% endif %}
+
+    <hr class="my-4">
 
     <div class="bg-white p-4 rounded shadow mb-4">
         <h2 class="font-bold">Números</h2>
-        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
             {% for number in purchase.total_numbers %}
-            <div class="bg-white p-4 rounded shadow mb-4">
-                <div class="flex justify-between">
-                    <div>
-                        <p>Número {{ number }}</p>
-                    </div>
-                </div>
+            <div class="flex justify-center">
+                <span class="bg-yellow-400 py-2 px-4 rounded-2xl shadow mb-4 text-center">
+                    {{ number }}
+                </span>
+
             </div>
             {% endfor %}
 
         </div>
-
-        {% if purchase.status == 'pending' %}
-        <div class="bg-white p-4 rounded shadow mb-4">
-            <h2 class="font-bold">Estado</h2>
-            <p>Pendiente de pago</p>
-            <form action="{{ url_for('payments.reallize_payment') }}" method="POST">
-                <input type="hidden" name="purchase_id" value="{{ purchase.id }}">
-
-                <div class="my-4">
-                    <label for="method">Método:</label>
-                    <select name="method" id="method" class="border border-gray-300 rounded-lg px-4 py-2 w-full">
-                        {% for m in metodos_pagos %}
-                        <option value="{{ m }}">{{ m }}</option>
-                        {% endfor %}
-                    </select>
-                </div>
-
-                <div class="my-4">
-                    <label for="amount">Monto:</label>
-                    <input type="text" id="amount" name="amount" class="border border-gray-300 rounded-lg px-4 py-2 w-full"
-                        value="{{ purchase.total_amount }}"
-                    >
-                </div>
-
-                <div class="my-4">
-                    <label for="reference_code">Referencia:</label>
-                    <input type="text" id="reference_code" name="reference_code" class="border border-gray-300 rounded-lg px-4 py-2 w-full">    
-                </div>
-
-                <button class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600" type="submit">
-                    <i class="fas fa-plus"></i>
-                    Pagar
-                </button>
-
-            </form>
-        </div>
-        {% endif %}
-
-        {% if purchase.status == 'paid' %}
-        <div class="bg-white p-4 rounded shadow mb-4">
-            <h2 class="font-bold">Estado</h2>
-            <p>Pago realizado</p>
-        </div>
-        {% endif %}
-
-
-
     </div>
+    {% if purchase.status == 'pending' and not purchase.payments[0] %}
+    <div class="bg-white p-4 rounded shadow mb-4">
+        <h2 class="font-bold">Realizar pago</h2>
+        <form action="{{ url_for('payments.reallize_payment') }}" method="POST">
+            <input type="hidden" name="purchase_id" value="{{ purchase.id }}">
+
+            <div class="my-4">
+                <label for="method">Método:</label>
+                <select name="method" id="method" class="border border-gray-300 rounded-lg px-4 py-2 w-full">
+                    {% for m in metodos_pagos %}
+                    <option value="{{ m }}">{{ m }}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="my-4">
+                <label for="amount">Monto:</label>
+                <input type="text" id="amount" name="amount" class="border border-gray-300 rounded-lg px-4 py-2 w-full"
+                    value="{{ purchase.total_amount }}">
+            </div>
+
+            <div class="my-4">
+                <label for="reference_code">Referencia:</label>
+                <input type="text" id="reference_code" name="reference_code"
+                    class="border border-gray-300 rounded-lg px-4 py-2 w-full">
+            </div>
+
+            <button class="bg-green-500 text-white px-3 py-1 rounded hover:bg-green-600" type="submit">
+                <i class="fas fa-plus"></i>
+                Pagar
+            </button>
+
+        </form>
+    </div>
+    {% endif %}
+
+
+
 
 </div>
 
 {% endblock %}
-

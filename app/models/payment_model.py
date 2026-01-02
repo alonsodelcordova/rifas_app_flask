@@ -30,3 +30,7 @@ class Payment(db.Model):
     reference_code = db.Column(db.String(100))
     status = db.Column(db.String(20), default=EstadoPayment.pending)
     paid_at = db.Column(db.DateTime)
+    
+    purchase = db.relationship("Purchase", backref="payments", uselist=False)
+    
+    

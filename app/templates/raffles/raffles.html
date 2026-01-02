@@ -91,12 +91,24 @@
 
   {% for rifa in raffles %}
   <div class="bg-white p-4 rounded shadow mb-4">
-    <h2 class="font-bold">{{ rifa.title.upper() }}</h2>
-    <p>S/ {{ rifa.price_per_number }}</p>
-    <p>{{ rifa.description }}</p>
-    <a href="{{ url_for('raffles.raffle_detail', raffle_id=rifa.id) }}" class="text-blue-500 bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded ">
-      Ver
-    </a>
+    <div class="flex justify-between items-center">
+      <div>
+        <h2 class="font-bold">{{ rifa.title.upper() }}</h2>
+        <p>Números: {{ rifa.total_numbers }}</p>
+        <br>
+        <a href="{{ url_for('raffles.raffle_detail', raffle_id=rifa.id) }}" class="text-white bg-green-400 hover:bg-green-600 px-3 py-2 rounded-lg ">
+          <i class="fas fa-eye"></i>
+          Ver
+        </a>
+      </div>
+      <div>
+        <span class="text-2xl font-bold">
+          S/ {{ rifa.price_per_number }}
+        </span>
+      </div>
+
+    </div>
+    
   </div>
   {% endfor %}
 

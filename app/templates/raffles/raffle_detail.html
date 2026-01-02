@@ -28,32 +28,37 @@
         <h2 class="font-bold">Números disponibles</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {% for number in raffle.numbers %}
-            <div class="bg-white p-4 rounded shadow mb-4">
+            <div class="bg-yellow-200 py-3 px-7 rounded-2xl shadow rounded shadow mb-4 clickable"
+                :class="selected.includes({{ number.number }}) 
+                            ? 'bg-blue-500 text-white' 
+                            : 'bg-gray-200'"
+                {% if  number.status == 'available' and (current_user.role == "client" or current_user.role ==
+                        "seller") %} 
+                @click="toggle({{ number.number }})"
+                {% endif %}
+            >
                 <div class="flex justify-between">
                     <div>
-                        <p>Número {{ number.number }}</p>
+                        <span class="text-xl font-bold block text-center">
+                            {{ number.number }}
+                        </span>
+
                         {% if number.status == 'available' and (current_user.role == "client" or current_user.role ==
                         "seller") %}
 
-                        <button @click="toggle({{ number.number }})" :class="selected.includes({{ number.number }}) 
-                            ? 'bg-blue-500 text-white' 
-                            : 'bg-gray-200'" class="p-2 rounded text-sm" {% if number.status !='available' %} disabled
-                            {% endif %}>
-                            {{ "%04d"|format(number.number) }}
-                        </button>
                         {% endif %}
                     </div>
                     <div>
                         {% if number.status == 'available' %}
-                        <span class="px-2 py-1 rounded text-sm bg-green-200">
+                        <span class="px-2 py-1 rounded text-sm bg-green-500">
                             Disponible
                         </span>
                         {% elif number.status == 'reserved' %}
-                        <span class="px-2 py-1 rounded text-sm bg-yellow-200">
+                        <span class="px-2 py-1 rounded text-sm bg-yellow-500">
                             Reservado
                         </span>
                         {% elif number.status == 'sold' %}
-                        <span class="px-2 py-1 rounded text-sm bg-red-200">
+                        <span class="px-2 py-1 rounded text-sm bg-red-500">
                             Vendido
                         </span>
                         {% endif %}
@@ -64,6 +69,7 @@
             {% endfor %}
 
         </div>
+        {% if current_user.role == "client" %}
         <div>
             <span>
                 Tienes <span x-text="selected.length"></span> números seleccionados
@@ -74,13 +80,7 @@
             :disabled="selected.length === 0">
             <i class="fas fa-file"></i> Reservar 
         </button>
-
-        <!-- BOTÓN COMPRAR -->
-        <button @click="buy()" class="mt-6 bg-blue-600 text-white px-6 py-2 rounded"
-            :disabled="selected.length === 0">
-            <i class="fas fa-credit-card"></i> Comprar
-        </button>
-
+        {% endif %}
     </div>
 
 </div>

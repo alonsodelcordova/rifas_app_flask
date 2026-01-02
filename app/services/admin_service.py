@@ -7,7 +7,7 @@ def get_admin_stats():
     sold_numbers = RaffleNumber.query.filter_by(status="sold").count()
     total_income = db.session.query(
         db.func.sum(Payment.amount)
-    ).scalar() or 0
+    ).filter_by(status="confirmed").scalar() or 0
     users = User.query.count()
     return {
         "active_raffles": active_raffles,
@@ -39,8 +39,12 @@ def get_seller_stats():
 def get_client_stats():
     id_client = current_user.id
     raffles = Raffle.query.filter_by(status="active").all()
-    sold_numbers = RaffleNumber.query.filter_by(status="sold").count()
-    pending_numbers = RaffleNumber.query.filter_by(status="reserved").count()
+    sold_numbers = RaffleNumber.query.filter_by(
+            status="sold", client_id=id_client
+        ).count()
+    pending_numbers = RaffleNumber.query.filter_by(
+            status="reserved", client_id=id_client
+        ).count()
     return {
         "active_raffles": len(raffles),
         "sold_numbers": sold_numbers,

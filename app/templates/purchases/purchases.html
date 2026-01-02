@@ -2,16 +2,11 @@
 
 {% block dashboard_content %}
 <div class="bg-white rounded-xl shadow p-6">
-  <div class="flex justify-between items-center">
     <h2 class="text-xl font-bold">
       <i class="fas fa-credit-card text-yellow-500"></i>
       <span class="ml-2">Compras</span>
     </h2>
-
-  </div>
-
-  <h2 class="text-xl font-bold mb-4">Compras</h2>
-
+    <br>
   <table class=" w-full text-left border-collapse table-auto">
     <thead>
       <tr class="border-b">
@@ -55,6 +50,11 @@
         </td>
       </tr>
       {% endfor %}
+      {% if purchases|length == 0 %}
+      <tr class="border-b">
+        <td colspan="4" class="text-center">No hay compras</td>
+      </tr>      
+      {% endif %}
     </tbody>
   </table>
 </div>
