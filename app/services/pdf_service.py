@@ -2,14 +2,14 @@ from reportlab.platypus import SimpleDocTemplate, Paragraph, Spacer
 from reportlab.lib.styles import getSampleStyleSheet
 from reportlab.lib.pagesizes import A4
 from reportlab.lib.units import cm
-from datetime import datetime
-import os
+from io import BytesIO
 
 def generate_raffle_pdf(raffle, winner, user, number):
-    filename = f"acta_sorteo_rifa_{raffle.id}.pdf"
-    path = os.path.join("static/pdfs", filename)
-
-    doc = SimpleDocTemplate(path, pagesize=A4)
+    pdf_bytes = BytesIO()
+    doc = SimpleDocTemplate(
+        pdf_bytes,
+        pagesize=A4
+    )
     styles = getSampleStyleSheet()
     story = []
 
@@ -18,9 +18,9 @@ def generate_raffle_pdf(raffle, winner, user, number):
 
     story.append(Paragraph(f"<b>Rifa:</b> {raffle.title}", styles["Normal"]))
     story.append(Paragraph(f"<b>Número ganador:</b> {number.number}", styles["Normal"]))
-    story.append(Paragraph(f"<b>Ganador:</b> {user.name}", styles["Normal"]))
+    story.append(Paragraph(f"<b>Ganador:</b> {user.username}", styles["Normal"]))
     story.append(Paragraph(
-        f"<b>Fecha del sorteo:</b> {winner.drawn_at.strftime('%d/%m/%Y %H:%M')}",
+        f"<b>Fecha del sorteo:</b> {winner.drawn_at.strftime('%d/%m/%Y %H:%M %p')}",
         styles["Normal"]
     ))
 
@@ -36,5 +36,9 @@ def generate_raffle_pdf(raffle, winner, user, number):
     ))
 
     doc.build(story)
-
-    return filename
+    #file
+    pdf_value = pdf_bytes.getvalue()
+    pdf_bytes.close()
+    
+    return pdf_value
+    

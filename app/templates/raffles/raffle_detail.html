@@ -93,6 +93,11 @@
         </span>
         <p>El ganador es: {{ raffle.winner[0].user.username }}</p>
     </div>
+
+    <button @click="download_acta()" class="mt-6 bg-green-600 text-white px-6 py-2 rounded">
+        <i class="fas fa-file"></i> Descargar acta
+    </button>
+
     {% endif %}
 
 </div>
@@ -141,7 +146,25 @@
                 }
 
                 this.loading = false
-            }
+            },
+            async download_acta() {
+                console.log("descargando acta")
+                this.loading = true
+                const res = await fetch(
+                    "{{ url_for('raffles.download_acta', raffle_id=raffle.id) }}"
+                )
+                // return file
+                const file = await res.blob()
+                const url = URL.createObjectURL(file)
+                const link = document.createElement('a')
+                link.href = url
+
+                link.setAttribute('download', "acta_sorteo_rifa_{{ raffle.id }}.pdf")
+                document.body.appendChild(link)
+                link.click()
+                this.loading = false
+            },
+
         }
     }
 </script>

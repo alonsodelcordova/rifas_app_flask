@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, render_template, flash, request, redirect, url_for
+from flask import Blueprint, jsonify, render_template, flash, request, redirect, url_for, Response
 from app.models import Raffle, Winner, RaffleNumber, User, EstadoRaffleNumber
 from app.services.raffles_service import get_active_raffles_cliente, get_raffle_detail, activate_raffle, delete_raffle
 from app.services.purchase_service import buy_numbers
@@ -8,6 +8,7 @@ from app.services.raffles_service import create_raffle
 from app.services.pdf_service import generate_raffle_pdf
 from app.services.raffles_service import draw_raffle
 from flask import send_from_directory
+import os
 
 raffle_bp = Blueprint("raffles", __name__, url_prefix="/raffles")
 
@@ -126,16 +127,20 @@ def draw_raffle_admin(raffle_id):
 @login_required
 @role_required("admin")
 def download_acta(raffle_id):
+    
     raffle = Raffle.query.get_or_404(raffle_id)
     winner = Winner.query.filter_by(raffle_id=raffle_id).first_or_404()
 
     number = RaffleNumber.query.get(winner.raffle_number_id)
     user = User.query.get(winner.user_id)
+    
+    filename = f"acta_sorteo_rifa_{raffle.id}.pdf"
 
-    filename = generate_raffle_pdf(raffle, winner, user, number)
+    pdf_value = generate_raffle_pdf(raffle, winner, user, number)
 
-    return send_from_directory(
-        "static/pdfs",
-        filename,
-        as_attachment=True
+    response = Response(
+        pdf_value,
+        mimetype="application/pdf",
+        headers={"Content-Disposition": f"attachment; filename={filename}"},
     )
+    return response
