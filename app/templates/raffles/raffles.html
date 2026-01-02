@@ -91,7 +91,7 @@
 
   {% for rifa in raffles %}
   <div class="bg-white p-4 rounded shadow mb-4">
-    <div class="flex justify-between items-center">
+    <div class="flex justify-between">
       <div>
         <h2 class="font-bold">{{ rifa.title.upper() }}</h2>
         <p>Números: {{ rifa.total_numbers }}</p>
@@ -101,7 +101,14 @@
           Ver
         </a>
       </div>
-      <div>
+      <div class="flex flex-col space-y-2">
+        <span 
+          class=" {% if rifa.status == 'active' %}
+            bg-green-100 text-green-700
+          {% else %}
+            bg-red-200
+          {% endif %} px-2 py-1 rounded text-sm text-center"
+        > {{rifa.status}} </span>
         <span class="text-2xl font-bold">
           S/ {{ rifa.price_per_number }}
         </span>
@@ -112,7 +119,13 @@
   </div>
   {% endfor %}
 
-
+  {% if raffles|length == 0 %}
+  <div class="flex justify-center items-center">
+    <h2 class="text-2xl font-bold text-gray-500">
+      No hay rifas disponibles
+    </h2>
+  </div>  
+  {% endif %}
 
 </div>
 {% endif %}

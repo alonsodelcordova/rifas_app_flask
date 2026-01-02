@@ -24,6 +24,7 @@
         <p>{{ raffle.description }}</p>
     </div>
 
+    {% if raffle.status == 'active' %}
     <div class="bg-white p-4 rounded shadow mb-4">
         <h2 class="font-bold">Números disponibles</h2>
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -82,6 +83,17 @@
         </button>
         {% endif %}
     </div>
+    {% endif %}
+
+    {% if raffle.status == 'finished' %}
+    <div class="bg-white p-4 rounded shadow mb-4">
+        <h2 class="font-bold">Ganador</h2>
+        <span class="text-2xl font-bold">
+             {{ raffle.winner[0].raffle_number.number }}
+        </span>
+        <p>El ganador es: {{ raffle.winner[0].user.username }}</p>
+    </div>
+    {% endif %}
 
 </div>
 
@@ -121,8 +133,9 @@
                 if (data.success) {
                     var message = "Números reservados correctamente\n"+
                         "Total a pagar: " + data.total + "\n";
+                    var purchase_id = data.purchase_id+"";
                     alert("Números reservados correctamente \n")
-                    window.location.href = "{{ url_for('raffles.raffle_detail', raffle_id=raffle.id) }}"
+                    window.location.href = "/purchases/purchases/"+purchase_id
                 } else {
                     alert(data.error)
                 }

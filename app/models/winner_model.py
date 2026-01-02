@@ -13,3 +13,20 @@ class Winner(db.Model):
 
     seed = db.Column(db.String(100))
     drawn_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    raffle = db.relationship(
+        "Raffle",
+        backref="winner",
+        uselist=False
+    )
+    raffle_number = db.relationship(
+        "RaffleNumber",
+        backref="winner",
+        uselist=False
+    )
+    
+    user = db.relationship(
+        "User",
+        backref="winner",
+        uselist=False
+    )

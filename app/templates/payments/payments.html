@@ -13,8 +13,7 @@
   <table class="w-full text-left">
     <thead>
       <tr class="border-b">
-        <th>ID</th>
-        <th>Compra</th>
+        <th>Rifa</th>
         <th>Método</th>
         <th>Monto</th>
         <th>Referencia</th>
@@ -25,8 +24,7 @@
     <tbody>
       {% for p in payments %}
       <tr class="border-b">
-        <td>#{{ p.id }}</td>
-        <td>#{{ p.purchase_id }}</td>
+        <td>{{ p.purchase.raffle.title }}</td>
         <td>{{ p.method }}</td>
         <td>S/ {{ p.amount }}</td>
         <td>{{ p.reference_code }}</td>

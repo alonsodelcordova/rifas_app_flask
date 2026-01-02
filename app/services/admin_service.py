@@ -1,5 +1,5 @@
 from app.extensions import db
-from app.models import Raffle, EstadoRaffle, RaffleNumber, Payment, User, RolUsuario
+from app.models import Raffle, EstadoRaffle, RaffleNumber, Payment, User, RolUsuario, Winner
 from flask_login import current_user
 
 def get_admin_stats():
@@ -45,8 +45,12 @@ def get_client_stats():
     pending_numbers = RaffleNumber.query.filter_by(
             status="reserved", client_id=id_client
         ).count()
+    
+    winners = Winner.query.filter_by(user_id=id_client).all()
+    
     return {
         "active_raffles": len(raffles),
         "sold_numbers": sold_numbers,
-        "pending_numbers": pending_numbers
+        "pending_numbers": pending_numbers,
+        "winners": winners
     }

@@ -6,7 +6,7 @@ from flask_login import current_user
 
 def get_active_raffles_cliente():
     
-    return Raffle.query.filter_by(status=EstadoRaffle.active).all()
+    return Raffle.query.all()
 
 def get_raffle_detail(raffle_id):
     return Raffle.query.get_or_404(raffle_id)
@@ -34,18 +34,17 @@ def draw_raffle(raffle_id):
     random.seed(seed)
 
     winner_number = random.choice(sold_numbers)
-    with db.session.begin():
-        winner = Winner(
-            raffle_id=raffle_id,
-            raffle_number_id=winner_number.id,
-            user_id=winner_number.purchase_item.purchase.user_id,
-            seed=seed,
-            drawn_at=datetime.utcnow()
-        )
+    winner = Winner(
+        raffle_id=raffle_id,
+        raffle_number_id=winner_number.id,
+        user_id=winner_number.purchase_item.purchase.user_id,
+        seed=seed,
+        drawn_at=datetime.utcnow()
+    )
 
-        raffle.status = EstadoRaffle.finished
-        db.session.add(winner)
-
+    raffle.status = EstadoRaffle.finished
+    db.session.add(winner)
+    db.session.commit()
     return winner
 
 # crear nuevo sorteo

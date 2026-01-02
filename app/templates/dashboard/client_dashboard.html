@@ -21,5 +21,40 @@
 
 </div>
 
+{% if stats.winners|length > 0 %}
+  <div class="bg-white p-6 rounded-xl shadow mt-4">
+    <h2 class="text-xl font-bold">
+      <i class="fas fa-trophy text-yellow-500"></i>
+      Felicitaciones, usted ha ganado 
+      <span class="text-gray-500">
+        ({{ stats.winners|length }})
+      </span> rifas
+    </h2>
+
+
+     <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6">
+
+    {% for winner in stats.winners %}
+    <div class="bg-white p-6 rounded-xl shadow">
+      <h3 class="text-gray-500">
+        <span class="text-xl font-bold">
+          {{ winner.raffle.title }}
+        </span>
+      </h3>
+      <strong>Número ganador:</strong>
+      <p class="text-3xl font-bold text-center">
+        {{ winner.raffle_number.number }}
+      </p>
+    </div>
+    {% endfor %}
+
+  </div>
+
+
+  </div>
+
+ 
+ 
+  {% endif %}
 
 {% endblock %}
