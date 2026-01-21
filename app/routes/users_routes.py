@@ -19,6 +19,9 @@ def users():
 @role_required("admin")
 def new_user():
     if request.method == "POST":
+        if username == "" or password == "":
+            flash("Falta campo", "error")
+            return redirect(url_for("users.new_user"))
         username = request.form["username"]
         password = request.form["password"]
         role = request.form["role"]
