@@ -48,11 +48,12 @@ def register():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        role = RolUsuario.client
+        role = request.form["role"]
         data = crear_usuario(username, password, role)
         flash(data["message"])
         return redirect(url_for('auth.index'))
     else:
-        return render_template('auth/register.html')
+        roles = RolUsuario.values()
+        return render_template('auth/register.html', roles=roles)
 
 
